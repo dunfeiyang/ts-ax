@@ -14,8 +14,8 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
     const {
       data = null,
       url,
-      method = 'get',
-      headers,
+      method,
+      headers = {},
       responseType,
       timeout,
       cancelToken,
@@ -30,7 +30,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
 
     const request = new XMLHttpRequest()
 
-    request.open(method.toUpperCase(), url!, true)
+    request.open(method!.toUpperCase(), url!, true)
 
     configureRequest()
 
@@ -67,7 +67,8 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
 
         const responseHeaders = parseHeader(request.getAllResponseHeaders())
 
-        const responseData = responseType !== 'text' ? request.response : request.responseText
+        const responseData =
+          responseType && responseType !== 'text' ? request.response : request.responseText
         const response: AxiosResponse = {
           data: responseData,
           status: request.status,
@@ -80,8 +81,9 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
         handleResponse(response)
       }
 
+      /* istanbul ignore next */
       request.onerror = function handleError(): void {
-        reject(createError('network error', config, null, request))
+        reject(createError('Network error', config, null, request))
       }
 
       request.ontimeout = function handleTimeout() {
@@ -114,7 +116,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       }
 
       Object.keys(headers).forEach(name => {
-        if (data === null && headers[name] === 'Content-Type') {
+        if (data === null && name === 'Content-Type') {
           delete headers[name]
         } else {
           request.setRequestHeader(name, headers[name])
@@ -124,10 +126,15 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
 
     function processCancel(): void {
       if (cancelToken) {
-        cancelToken.promise.then(reason => {
-          request.abort()
-          reject(reason)
-        })
+        cancelToken.promise
+          .then(reason => {
+            request.abort()
+            reject(reason)
+          })
+          /* istanbul ignore next */
+          .catch(() => {
+            //
+          })
       }
     }
 
@@ -137,7 +144,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       } else {
         reject(
           createError(
-            `Request filed with status code ${response.status}`,
+            `Request failed with status code ${response.status}`,
             config,
             null,
             request,

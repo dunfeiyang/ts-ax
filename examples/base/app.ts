@@ -8,15 +8,15 @@ import axios from '../../src/index'
 //   }
 // })
 
-// axios({
-//   method: 'get',
-//   url: '/base/get',
-//   params: {
-//     foo: {
-//       bar: 'baz'
-//     }
-//   }
-// })
+axios({
+  method: 'GET',
+  url: '/base/get',
+  params: {
+    foo: {
+      bar: 'baz'
+    }
+  }
+})
 
 // const date = new Date()
 
@@ -101,7 +101,7 @@ import axios from '../../src/index'
 // })
 
 axios({
-  method: 'post',
+  method: 'POST',
   url: '/base/post',
   data: {
     a: 1,
@@ -111,14 +111,14 @@ axios({
   console.log(res)
 })
 
-axios({
-  method: 'post',
-  url: '/base/post',
-  responseType: 'json',
-  data: {
-    a: 3,
-    b: 4
-  }
-}).then(res => {
-  console.log(res)
-})
+// axios({
+//   method: 'post',
+//   url: '/base/post',
+//   responseType: 'json',
+//   data: {
+//     a: 3,
+//     b: 4
+//   }
+// }).then(res => {
+//   console.log(res)
+// })
