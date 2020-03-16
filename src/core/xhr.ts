@@ -133,7 +133,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
           })
           /* istanbul ignore next */
           .catch(() => {
-            //
+            // nothing
           })
       }
     }
